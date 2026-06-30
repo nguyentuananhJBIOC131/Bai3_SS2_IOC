@@ -19,4 +19,11 @@ public class UserRepository {
     public List<User> findAll() {
         return users;
     }
+
+    public User findById(Long id) {
+        return users.stream()
+                .filter(user -> user.getId().equals(id))
+                .findFirst()
+                .orElse(null);
+    }
 }

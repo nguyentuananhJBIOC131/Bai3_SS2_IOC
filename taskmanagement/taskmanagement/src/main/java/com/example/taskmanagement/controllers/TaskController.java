@@ -3,6 +3,7 @@ package com.example.taskmanagement.controllers;
 import com.example.taskmanagement.models.Task;
 import com.example.taskmanagement.services.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,5 +33,16 @@ public class TaskController {
         }
 
         return ResponseEntity.ok(tasks);
+    }
+
+    @PostMapping
+    public ResponseEntity<Task> createTask(@RequestBody Task newTask) {
+        boolean isCreated = taskService.createTask(newTask);
+
+        if (isCreated) {
+            return ResponseEntity.status(HttpStatus.CREATED).body(newTask);
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
     }
 }
