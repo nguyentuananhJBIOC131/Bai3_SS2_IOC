@@ -3,12 +3,14 @@ package com.example.taskmanagement.controllers;
 import com.example.taskmanagement.models.User;
 import com.example.taskmanagement.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
+@RequestMapping("/users")
 public class UserController {
     private final UserService userService;
 
@@ -17,8 +19,18 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping("/users")
-    public List<User> getAllUsers() {
-        return userService.findAllUsers();
+    @GetMapping
+    public ResponseEntity<List<User>> getAllUsers(
+            @RequestParam(required = false) String search) {
+
+        List<User> users = userService.findAllUsers();
+
+          if (search != null && !search.trim().isEmpty()) {
+            users = users.stream()
+                    .filter(user -> user.getUsername().toLowerCase().contains(search.toLowerCase()))
+                    .collect(Collectors.toList());
+        }
+
+        return ResponseEntity.ok(users);
     }
 }
